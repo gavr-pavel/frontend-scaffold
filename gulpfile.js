@@ -86,7 +86,7 @@ gulp.task('scripts', function () {
 
 gulp.task('images', function () {
 
-    return gulp.src(['src/images/**/*'])
+    return gulp.src(['src/images/**/*', 'src/vendor/img/**/*'])
         .pipe(plumber())
         .pipe(newer(settings.dest+'/img'))
         .pipe(imagemin())
@@ -152,7 +152,7 @@ gulp.task('default', ['templates', 'styles', 'scripts', 'images', 'fonts', 'vend
 
     gulp.watch(['src/scripts', 'src/scripts/**/*.coffee'], ['scripts']);
 
-    gulp.watch(['src/images', 'src/images/**/*'], ['images']);
+    gulp.watch(['src/images', 'src/images/**/*', 'src/vendor/img/**/*'], ['images']);
 
     gulp.watch(['src/fonts', 'src/fonts/**/*'], ['fonts']);
 

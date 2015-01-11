@@ -10,7 +10,7 @@ Development routine automated with gulp
 
 ## Preparation
 
-Install dependencies
+Install dependencies:
 ```
 npm install
 ```
@@ -38,13 +38,13 @@ src
 ```
 gulp
 ```
-Compiles app without minification and starts development server with livereload on localhost:8080
-Compiled code stored in `dist` folder
+Compiles app code without minification and starts development server with livereload on localhost:8080.
+Compiled code stored in `dist` folder.
 
 
 ### Run tasks in production mode
 ```
 gulp prod
 ```
-Compiles and minifies app and
-Compiled code stored in `build` folder
+Compiles and minifies app code.
+Compiled code stored in `build` folder.

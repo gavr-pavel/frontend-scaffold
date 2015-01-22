@@ -3,17 +3,18 @@
 var gulp = require('gulp');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
-var coffee = require('gulp-coffee');
+var nib = require('nib');
+var minifyCSS = require('gulp-minify-css');
 var prefix = require('gulp-autoprefixer');
-var csso = require('gulp-csso');
+var coffee = require('gulp-coffee');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var connect = require('gulp-connect');
 var imagemin = require('gulp-imagemin');
 var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
-var gulpif = require('gulp-if');
 var del = require('del');
+var sourcemaps = require('gulp-sourcemaps');
 
 
 
@@ -59,9 +60,13 @@ gulp.task('styles', function () {
 
     return gulp.src('src/styles/app.styl')
         .pipe(plumber())
-        .pipe(stylus())
-        .pipe(prefix())
-        .pipe(gulpif(!settings.debug, csso()))
+        .pipe(sourcemaps.init())
+          .pipe(stylus({
+              use: nib(),
+              compress: true
+          }))
+          .pipe(prefix())
+        .pipe(sourcemaps.write('.', {sourceRoot: '/src/styles'}))
         .pipe(gulp.dest(settings.dest+'/css'))
         .pipe(connect.reload());
 
@@ -75,9 +80,11 @@ gulp.task('scripts', function () {
         ])
         .pipe(plumber())
         .pipe(newer(settings.dest+'/js/app.js'))
-        .pipe(coffee())
-        .pipe(concat('app.js'))
-        .pipe(gulpif(!settings.debug, uglify()))
+        .pipe(sourcemaps.init())
+          .pipe(coffee())
+          .pipe(concat('app.js'))
+          .pipe(uglify())
+        .pipe(sourcemaps.write('.', {sourceRoot: '/src/scripts'}))
         .pipe(gulp.dest(settings.dest+'/js'))
         .pipe(connect.reload());
 
@@ -110,8 +117,10 @@ gulp.task('vendor-css', function () {
     return gulp.src('src/vendor/css/**/*.css')
         .pipe(plumber())
         .pipe(newer(settings.dest+'/js/vendor.css'))
-        .pipe(concat('vendor.css'))
-        .pipe(gulpif(!settings.debug, csso()))
+        .pipe(sourcemaps.init())
+          .pipe(concat('vendor.css'))
+          .pipe(minifyCSS())
+        .pipe(sourcemaps.write('.', {sourceRoot: '/src/vendor/css'}))
         .pipe(gulp.dest(settings.dest+'/css'))
         .pipe(connect.reload());
 
@@ -123,8 +132,10 @@ gulp.task('vendor-js', function () {
     return gulp.src('src/vendor/js/**/*.js')
         .pipe(plumber())
         .pipe(newer(settings.dest+'/js/vendor.js'))
-        .pipe(concat('vendor.js'))
-        .pipe(gulpif(!settings.debug, uglify()))
+        .pipe(sourcemaps.init())
+          .pipe(concat('vendor.js'))
+          .pipe(uglify())
+        .pipe(sourcemaps.write('.', {sourceRoot: '/src/vendor/js'}))
         .pipe(gulp.dest(settings.dest+'/js'))
         .pipe(connect.reload());
 
@@ -165,16 +176,11 @@ gulp.task('default', ['templates', 'styles', 'scripts', 'images', 'fonts', 'vend
 });
 
 
-gulp.task('clear:build', function () {
-
-    del.sync('build');
-
-});
-
-
-gulp.task('prepare:build', ['clear:build'], function () {
+gulp.task('prepare:build', function () {
 
     settings.debug = false;
+
+    del.sync('build');
 
 });
 

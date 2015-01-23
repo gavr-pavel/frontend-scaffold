@@ -38,7 +38,7 @@ src
 ```
 gulp
 ```
-Compiles app code without minification and starts development server with livereload on localhost:8080.
+Compiles app without html minification and starts development server with livereload on localhost:8080.
 Compiled code stored in `dist` folder.
 
 

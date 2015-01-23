@@ -15,7 +15,10 @@ var newer = require('gulp-newer');
 var plumber = require('gulp-plumber');
 var del = require('del');
 var sourcemaps = require('gulp-sourcemaps');
-
+var glob = require('glob');
+var sprite = require('css-sprite').stream;
+var gulpif = require('gulp-if');
+var mergeStream = require('merge-stream');
 
 
 var settings = (function () {
@@ -56,7 +59,7 @@ gulp.task('templates', function () {
 });
 
 
-gulp.task('styles', function () {
+gulp.task('styles', ['sprites'], function () {
 
     return gulp.src('src/styles/app.styl')
         .pipe(plumber())
@@ -75,9 +78,7 @@ gulp.task('styles', function () {
 
 gulp.task('scripts', function () {
 
-    return gulp.src([
-            'src/scripts/**/*.coffee',
-        ])
+    return gulp.src('src/scripts/**/*.coffee')
         .pipe(plumber())
         .pipe(newer(settings.dest+'/js/app.js'))
         .pipe(sourcemaps.init())
@@ -93,7 +94,12 @@ gulp.task('scripts', function () {
 
 gulp.task('images', function () {
 
-    return gulp.src(['src/images/**/*', 'src/vendor/img/**/*'])
+    return gulp.src([
+            'src/images/**/*',
+            '!src/images/sprites',
+            '!src/images/sprites/**/*',
+            'src/vendor/img/**/*'
+        ])
         .pipe(plumber())
         .pipe(newer(settings.dest+'/img'))
         .pipe(imagemin())
@@ -102,9 +108,63 @@ gulp.task('images', function () {
 });
 
 
+gulp.task('sprites', function (cb) {
+
+    glob('src/images/sprites/*', function (err, matches) {
+        if (!matches.length) cb();
+
+        var streams = [];
+
+        matches.forEach(function (path) {
+
+            var spriteName = path.split('/').pop();
+            var isRetina = false;
+            var isBase64 = false;
+
+            if (/@2x$/.test(spriteName)) {
+                isRetina = true;
+                spriteName = spriteName.replace(/@2x$/, '');
+            }
+            if (/-base64$/.test(spriteName)) {
+                isBase64 = true;
+                spriteName = spriteName.replace(/-base64$/, '');
+            }
+
+            var stream = gulp.src(path + '/*.png')
+                .pipe(plumber())
+                .pipe(newer(settings.dest+'/img'+spriteName+'.png'))
+                .pipe(sprite({
+                    name: spriteName + '-sprite',
+                    base64: isBase64,
+                    retina: isRetina,
+                    style: spriteName + '-sprite.styl',
+                    cssPath: '../img',
+                    template: 'src/styles/sprites/template.mustache',
+                    prefix: 'icon-' + spriteName
+                }));
+
+            streams.push(stream);
+
+        });
+
+        mergeStream.apply(null, streams)
+            .pipe(
+                gulpif('*.png',                      // if png
+                    gulp.dest(settings.dest+'/img'), // then move to images
+                    gulp.dest('src/styles/sprites')  // else move to stylesheets
+                )
+            )
+            .on('data', function () {})
+            .on('end', cb);
+
+    });
+
+});
+
+
 gulp.task('fonts', function () {
 
-    return gulp.src(['src/fonts/**/*'])
+    return gulp.src('src/fonts/**/*')
         .pipe(plumber())
         .pipe(newer(settings.dest+'/fonts'))
         .pipe(gulp.dest(settings.dest+'/fonts'));
@@ -157,13 +217,15 @@ gulp.task('default', ['templates', 'styles', 'scripts', 'images', 'fonts', 'vend
         livereload: true
     });
 
-    gulp.watch(['src/templates', 'src/templates/**/*.jade'], ['templates']);
+    gulp.watch(['src/templates' ,'src/templates/**/*.jade'], ['templates']);
 
     gulp.watch(['src/styles', 'src/styles/**/*.styl'], ['styles']);
 
     gulp.watch(['src/scripts', 'src/scripts/**/*.coffee'], ['scripts']);
 
-    gulp.watch(['src/images', 'src/images/**/*', 'src/vendor/img/**/*'], ['images']);
+    gulp.watch(['src/images', 'src/images/**/*', '!src/images/sprites', '!src/images/sprites/**/*', 'src/vendor/img/**/*'], ['images']);
+
+    gulp.watch(['src/images/sprites', 'src/images/sprites/*', 'src/images/sprites/**/*.png'], ['sprites']);
 
     gulp.watch(['src/fonts', 'src/fonts/**/*'], ['fonts']);
 

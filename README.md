@@ -57,12 +57,12 @@ Compiled code stored in `build` folder.
 ## Notes
 
 #### Sprites
-For each subfolder of `src/images/sprites` with images in it will be generated sprite and stylesheet with classes `.icon-foldername` and `.icon-foldername-imgname` (for each image in folder).
+For each subfolder of `src/images/sprites` with images in it will be generated spritesheet and stylesheet with classes `.icon-foldername` and `.icon-foldername-imgname` (for each image in folder).
 To add the icon into a web page just add an element with `class="icon-foldername icon-foldername-imgname"` in your templates.
 
-Folder naming rules:
+Folders naming rules:
 * `foldername` – spritesheet and stylesheet will be genereted.
-* `foldername@2x` – spritesheets and stylesheets will be generated for both regular and retina resolutions. Source images must be retina-sized.
+* `foldername@2x` – spritesheet and stylesheet will be generated for both regular and retina resolutions. Source images must be retina-sized.
 * `foldername-base64` – images will be base64-encoded and inserted into a stylesheet.
 * `foldername-base64@2x` – both regular and retina sized images will be base64-encoded and inserted into a stylesheet (I don't recommend to use this option, because browsers must load images in both resolutions in this case. Use second option instead).
 

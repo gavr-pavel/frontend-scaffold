@@ -22,15 +22,16 @@ npm install
 
 ## Usage
 
-### Folder structure
+#### Directory structure
 
 ```
 src
-├── fonts
-├── images
-├── scripts
 ├── styles
 ├── templates
+├── scripts
+├── fonts
+├── images
+|   └── sprites
 └── vendor
     ├── js
     ├── css
@@ -38,7 +39,7 @@ src
 ```
 
 
-### Run tasks in development mode
+#### Run tasks in development mode
 ```
 gulp
 ```
@@ -46,7 +47,7 @@ Compiles app without html minification and starts development server with livere
 Compiled code stored in `dist` folder.
 
 
-### Run tasks in production mode
+#### Run tasks in production mode
 ```
 gulp prod
 ```
@@ -66,4 +67,4 @@ Folders naming rules:
 * `foldername-base64` – images will be base64-encoded and inserted into a stylesheet.
 * `foldername-base64@2x` – both regular and retina sized images will be base64-encoded and inserted into a stylesheet (I don't recommend to use this option, because browsers must load images in both resolutions in this case. Use second option instead).
 
-Also, there is possibility of gulp crash when trying to rename subfolder of `src/images/sprites` while gulp is watching (due to [this issue](https://github.com/shama/gaze/issues/114)). There is nothing to do except of waiting until gulp updates.
+Also there is possibility of gulp crash when trying to rename subfolder of `src/images/sprites` while gulp is watching (due to [this issue](https://github.com/shama/gaze/issues/114)). There is nothing to do except of waiting until gulp updates.

@@ -60,7 +60,7 @@ Compiled code stored in `build` folder.
 For each subfolder of `src/images/sprites` with images in it will be generated sprite and stylesheet with classes `.icon-foldername` and `.icon-foldername-imgname` (for each image in folder).
 To add the icon into a web page just add an element with `class="icon-foldername icon-foldername-imgname"` in your templates.
 
-There are naming rules:
+Folder naming rules:
 * `foldername` – spritesheet and stylesheet will be genereted.
 * `foldername@2x` – spritesheets and stylesheets will be generated for both regular and retina resolutions. Source images must be retina-sized.
 * `foldername-base64` – images will be base64-encoded and inserted into a stylesheet.

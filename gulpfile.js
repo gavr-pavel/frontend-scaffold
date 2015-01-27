@@ -111,7 +111,7 @@ gulp.task('images', function () {
 gulp.task('sprites', function (cb) {
 
     glob('src/images/sprites/*', function (err, matches) {
-        if (!matches.length) cb();
+        if (!matches.length) return cb();
 
         var streams = [];
 

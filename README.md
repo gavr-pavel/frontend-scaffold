@@ -1,5 +1,5 @@
 # frontend-scaffold
-Development routine automated with gulp
+Development routine automated with [gulp](https://github.com/gulpjs/gulp).
 
 
 ## Preprocessors
